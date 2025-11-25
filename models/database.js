@@ -103,6 +103,82 @@ const database = {
                 else resolve(rows);
             });
         });
+    },
+
+    // ⭐⭐⭐ CRUD MŰVELETEK ⭐⭐⭐
+
+    // Összes szálloda lekérése (READ - CRUD-hoz)
+    getAllSzallodak: () => {
+        return new Promise((resolve, reject) => {
+            db.all(`SELECT s.*, h.nev as helyseg_nev, h.orszag 
+                   FROM szalloda s 
+                   JOIN helyseg h ON s.helyseg_az = h.az 
+                   ORDER BY s.nev`, (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+    },
+
+    // Egy szálloda lekérése ID alapján (READ)
+    getSzallodaById: (id) => {
+        return new Promise((resolve, reject) => {
+            db.get(`SELECT s.*, h.nev as helyseg_nev, h.orszag 
+                   FROM szalloda s 
+                   JOIN helyseg h ON s.helyseg_az = h.az 
+                   WHERE s.az = ?`, [id], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
+    },
+
+    // Új szálloda hozzáadása (CREATE)
+    addSzalloda: (szallodaData) => {
+        return new Promise((resolve, reject) => {
+            const { az, nev, besorolas, helyseg_az, tengerpart_tav, repter_tav, felpanzio } = szallodaData;
+            db.run(`INSERT INTO szalloda (az, nev, besorolas, helyseg_az, tengerpart_tav, repter_tav, felpanzio) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                   [az, nev, besorolas, helyseg_az, tengerpart_tav, repter_tav, felpanzio], 
+                   function(err) {
+                if (err) reject(err);
+                else resolve({ id: this.lastID });
+            });
+        });
+    },
+
+    // Szálloda módosítása (UPDATE)
+    updateSzalloda: (id, szallodaData) => {
+        return new Promise((resolve, reject) => {
+            const { nev, besorolas, helyseg_az, tengerpart_tav, repter_tav, felpanzio } = szallodaData;
+            db.run(`UPDATE szalloda SET nev = ?, besorolas = ?, helyseg_az = ?, 
+                   tengerpart_tav = ?, repter_tav = ?, felpanzio = ? WHERE az = ?`,
+                   [nev, besorolas, helyseg_az, tengerpart_tav, repter_tav, felpanzio, id], 
+                   function(err) {
+                if (err) reject(err);
+                else resolve({ changes: this.changes });
+            });
+        });
+    },
+
+    // Szálloda törlése (DELETE)
+    deleteSzalloda: (id) => {
+        return new Promise((resolve, reject) => {
+            db.run("DELETE FROM szalloda WHERE az = ?", [id], function(err) {
+                if (err) reject(err);
+                else resolve({ changes: this.changes });
+            });
+        });
+    },
+
+    // Helységek lekérése a dropdown-hoz
+    getHelysegekForDropdown: () => {
+        return new Promise((resolve, reject) => {
+            db.all("SELECT az, nev, orszag FROM helyseg ORDER BY orszag, nev", (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
     }
 };
 

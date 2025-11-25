@@ -1,0 +1,70 @@
+<%- include('partials/header', {currentPage: 'crud'}) %>
+
+<!-- Main -->
+<div id="main">
+    <article class="post">
+        <header class="major">
+            <h1>Új Szálloda Hozzáadása</h1>
+            <p>Adja meg az új szálloda adatait</p>
+        </header>
+
+        <a href="/crud" class="button">⬅️ Vissza a listához</a>
+
+        <form method="POST" action="/crud/uj" style="margin-top: 2rem;">
+            <div class="row gtr-uniform">
+                <div class="col-6 col-12-xsmall">
+                    <label for="az">Szálloda Kód *</label>
+                    <input type="text" name="az" id="az" required placeholder="Pl. AB, CD, EF">
+                </div>
+                <div class="col-6 col-12-xsmall">
+                    <label for="nev">Szálloda Neve *</label>
+                    <input type="text" name="nev" id="nev" required placeholder="Szálloda teljes neve">
+                </div>
+                <div class="col-4 col-12-xsmall">
+                    <label for="besorolas">Besorolás *</label>
+                    <select name="besorolas" id="besorolas" required>
+                        <option value="">Válasszon besorolást</option>
+                        <option value="1">⭐ 1 csillag</option>
+                        <option value="2">⭐⭐ 2 csillag</option>
+                        <option value="3">⭐⭐⭐ 3 csillag</option>
+                        <option value="4">⭐⭐⭐⭐ 4 csillag</option>
+                        <option value="5">⭐⭐⭐⭐⭐ 5 csillag</option>
+                    </select>
+                </div>
+                <div class="col-4 col-12-xsmall">
+                    <label for="helyseg_az">Helység *</label>
+                    <select name="helyseg_az" id="helyseg_az" required>
+                        <option value="">Válasszon helységet</option>
+                        <% helysegek.forEach(helyseg => { %>
+                        <option value="<%= helyseg.az %>"><%= helyseg.nev %> (<%= helyseg.orszag %>)</option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-4 col-12-xsmall">
+                    <label for="felpanzio">Félpanzió</label>
+                    <select name="felpanzio" id="felpanzio">
+                        <option value="0">❌ Nem</option>
+                        <option value="1">✅ Igen</option>
+                    </select>
+                </div>
+                <div class="col-6 col-12-xsmall">
+                    <label for="tengerpart_tav">Tengerpart távolsága (m)</label>
+                    <input type="number" name="tengerpart_tav" id="tengerpart_tav" value="0" min="0" max="1000">
+                    <small>0 = Parti szálloda</small>
+                </div>
+                <div class="col-6 col-12-xsmall">
+                    <label for="repter_tav">Repültér távolsága (km)</label>
+                    <input type="number" name="repter_tav" id="repter_tav" value="0" min="0" max="200">
+                </div>
+                <div class="col-12">
+                    <ul class="actions">
+                        <li><input type="submit" value="💾 Szálloda Hozzáadása" class="primary"></li>
+                        <li><a href="/crud" class="button">❌ Mégse</a></li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </article>
+</div>
+
+<%- include('partials/footer') %>

@@ -4,15 +4,106 @@
 <div id="main">
     <article class="post">
         <header class="major">
-            <h1>Sználloda Kezelés</h1>
+            <h1>Szálloda Kezelés</h1>
             <p>CRUD műveletek a szállodák kezeléséhez</p>
         </header>
+
+        <!-- Üzenetek -->
+        <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert success">
+            <strong>✅ Sikeres!</strong> <%= success %>
+        </div>
+        <% } %>
         
-        <section>
-            <h3>Ez az oldal készülőben van</h3>
-            <p>A szállodák kezelése (Create, Read, Update, Delete) hamarosan elérhető lesz.</p>
-        </section>
+        <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert error">
+            <strong>❌ Hiba!</strong> <%= error %>
+        </div>
+        <% } %>
+
+        <!-- Új szálloda gomb -->
+        <div style="margin-bottom: 2rem;">
+            <a href="/crud/uj" class="button primary">➕ Új Szálloda</a>
+        </div>
+
+        <!-- Szállodák táblázata -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kód</th>
+                        <th>Szálloda Neve</th>
+                        <th>Besorolás</th>
+                        <th>Helység</th>
+                        <th>Tengerpart</th>
+                        <th>Repültér</th>
+                        <th>Félpanzió</th>
+                        <th>Műveletek</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (szallodak.length > 0) { %>
+                        <% szallodak.forEach(szalloda => { %>
+                        <tr>
+                            <td><strong><%= szalloda.az %></strong></td>
+                            <td><%= szalloda.nev %></td>
+                            <td>
+                                <% for (let i = 0; i < szalloda.besorolas; i++) { %>
+                                ⭐
+                                <% } %>
+                            </td>
+                            <td><%= szalloda.helyseg_nev %> (<%= szalloda.orszag %>)</td>
+                            <td>
+                                <% if (szalloda.tengerpart_tav === 0) { %>
+                                Parti
+                                <% } else { %>
+                                <%= szalloda.tengerpart_tav %> m
+                                <% } %>
+                            </td>
+                            <td><%= szalloda.repter_tav %> km</td>
+                            <td><%= szalloda.felpanzio ? '✅ Igen' : '❌ Nem' %></td>
+                            <td>
+                                <a href="/crud/szerkesztes/<%= szalloda.az %>" class="button small">✏️ Szerkesztés</a>
+                                <form action="/crud/torles/<%= szalloda.az %>" method="POST" style="display: inline;">
+                                    <button type="submit" class="button small" onclick="return confirm('Biztosan törölni szeretné ezt a szállodát?')">🗑️ Törlés</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="8" style="text-align: center;">Még nincsenek szállodák</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <p>Összesen <strong><%= szallodak.length %></strong> szálloda</p>
     </article>
 </div>
+
+<style>
+.alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+}
+.alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+.button.small {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+</style>
 
 <%- include('partials/footer') %>

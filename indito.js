@@ -3,6 +3,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+// Route-ok importálása
+const adatbazisRoutes = require('./routes/adatbazis');
+
 const app = express();
 const PORT = 3000;
 
@@ -32,14 +35,6 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/adatbazis', (req, res) => {
-    res.render('adatbazis', { 
-        title: 'Ajánlatok',
-        user: req.session.user,
-        currentPage: 'adatbazis'
-    });
-});
-
 app.get('/kapcsolat', (req, res) => {
     res.render('kapcsolat', { 
         title: 'Kapcsolat',
@@ -55,6 +50,9 @@ app.get('/crud', (req, res) => {
         currentPage: 'crud'
     });
 });
+
+//ADATBÁZIS ROUTE - EZ FOGJA KEZELNI AZ /adatbazis ÚTVONALAT 
+app.use('/adatbazis', adatbazisRoutes);
 
 // Ideiglenes route-ok a hiányzó oldalakhoz
 app.get('/bejelentkezes', (req, res) => {

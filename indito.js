@@ -5,6 +5,7 @@ const session = require('express-session');
 
 // Route-ok importálása
 const adatbazisRoutes = require('./routes/adatbazis');
+const crudRoutes = require('./routes/crud');
 
 const app = express();
 const PORT = 3000;
@@ -18,7 +19,7 @@ app.use(express.static('public'));
 app.use(session({
     secret: 'napfeny-tours-secret-key',
     resave: false,
-    saveUninitialized: true,
+    saveUnitialized: true,
     cookie: { secure: false }
 }));
 
@@ -43,16 +44,11 @@ app.get('/kapcsolat', (req, res) => {
     });
 });
 
-app.get('/crud', (req, res) => {
-    res.render('crud', { 
-        title: 'Szállodák',
-        user: req.session.user,
-        currentPage: 'crud'
-    });
-});
-
 //ADATBÁZIS ROUTE - EZ FOGJA KEZELNI AZ /adatbazis ÚTVONALAT 
 app.use('/adatbazis', adatbazisRoutes);
+
+// ⭐⭐⭐ CRUD ROUTE - EZ FOGJA KEZELNI AZ /crud ÚTVONALAT ⭐⭐⭐
+app.use('/crud', crudRoutes);
 
 // Ideiglenes route-ok a hiányzó oldalakhoz
 app.get('/bejelentkezes', (req, res) => {

@@ -1,0 +1,130 @@
+<%- include('partials/header', {currentPage: 'adatbazis'}) %>
+
+<!-- Main -->
+<div id="main">
+    <article class="post">
+        <header class="major">
+            <h1>Utazási Ajánlataink</h1>
+            <p>Fedezze fel 2011-es tavaszi utazási ajánlatainkat Tunéziából és Egyiptomból</p>
+        </header>
+    </article>
+
+    <!-- Helységek Szakasz -->
+    <section class="posts">
+        <article>
+            <header>
+                <h2>Célállomások</h2>
+            </header>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ország</th>
+                            <th>Helység</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% helysegek.forEach(helyseg => { %>
+                        <tr>
+                            <td><strong><%= helyseg.orszag %></strong></td>
+                            <td><%= helyseg.nev %></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <p>Összesen <strong><%= helysegek.length %></strong> célállomás</p>
+        </article>
+
+        <!-- Szállodák Szakasz -->
+        <article>
+            <header>
+                <h2>Szállodák</h2>
+            </header>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Szálloda</th>
+                            <th>Besorolás</th>
+                            <th>Helység</th>
+                            <th>Tengerpart</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% szallodak.forEach(szalloda => { %>
+                        <tr>
+                            <td><strong><%= szalloda.nev %></strong></td>
+                            <td>
+                                <% for (let i = 0; i < szalloda.besorolas; i++) { %>
+                                ⭐
+                                <% } %>
+                            </td>
+                            <td><%= szalloda.helyseg_nev %></td>
+                            <td>
+                                <% if (szalloda.tengerpart_tav === 0) { %>
+                                Parti
+                                <% } else { %>
+                                <%= szalloda.tengerpart_tav %> m
+                                <% } %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <p>Összesen <strong><%= szallodak.length %></strong> szálloda</p>
+        </article>
+    </section>
+
+    <!-- Árak Szakasz -->
+    <article>
+        <header>
+            <h2>Tavaszi Árak</h2>
+        </header>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Szálloda</th>
+                        <th>Indulás</th>
+                        <th>Időtartam</th>
+                        <th>Ár (Ft)</th>
+                        <th>Ország</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (tavaszArak.length > 0) { %>
+                        <% tavaszArak.forEach(ar => { %>
+                        <tr>
+                            <td><%= ar.szalloda_nev %></td>
+                            <td><%= new Date(ar.indulas).toLocaleDateString('hu-HU') %></td>
+                            <td><%= ar.idotartam %> nap</td>
+                            <td><strong><%= ar.ar.toLocaleString('hu-HU') %> Ft</strong></td>
+                            <td><%= ar.orszag %></td>
+                        </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Még nincsenek árajánlatok</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <% if (tavaszArak.length > 0) { %>
+        <p>Összesen <strong><%= tavaszArak.length %></strong> árajánlat</p>
+        <% } %>
+    </article>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+    <article>
+        <div class="error-message">
+            <h3>Hiba történt</h3>
+            <p><%= error %></p>
+        </div>
+    </article>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

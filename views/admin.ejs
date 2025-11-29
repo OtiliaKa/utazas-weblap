@@ -1,37 +1,36 @@
 <%- include('partials/header', { title: title, user: user, currentPage: currentPage }) %>
 
-
 <div id="main">
     <article class="post">
         <header class="major">
             <h1>Admin felület</h1>
         </header>
 
-        <form action="/admin" method="POST" style="display: flex; flex-direction: column; align-items: center;">  
-            
-            <a href="/">Mainpage</a>
-<%    if (isAdmin) { %>
-        <a href="/admin">Admin</a>
-    <% } 
-    if (isAuth) { %>
-        <a href="/protected-route">Dashboard</a>
-        <a href="/logout">Logout</a>
-    <% } 
-    else{ %>  
-        <a href="/login">Login</a>
-    <% } %>
-<a href="/register">Register</a>
-<p></p>
-<%    if (isAuth) { %>
-        <h1>You are logged in. Hello <%= userName %>!</h1> 
-    <% } 
-    else{ %>  
-        <h1>You are not logged in.</h1> 
-    <% }
-%>
+        <% if (error) { %>
+            <div style="color: red; text-align: center;">
+                <h2><%= error %></h2>
+            </div>
+        <% } else { %>
+            <h2>Összes üzenet</h2>
+            <% if (messages && messages.length > 0) { %>
+                <div style="margin-top: 20px;">
+                    <% messages.forEach(message => { %>
+                        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                            <strong><%= message.user_nev %></strong> - <%= new Date(message.date).toLocaleString('hu-HU') %>
+                            <p><%= message.content %></p>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p>Nincsenek üzenetek.</p>
+            <% } %>
+        <% } %>
 
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/">Főoldal</a> |
+            <a href="/kijelentkezes">Kijelentkezés</a>
+        </div>
     </article>
 </div>
-</form>
 
 <%- include('partials/footer') %>

@@ -49,10 +49,10 @@ router.get('/uj', async (req, res) => {
 // Új szálloda mentése (CREATE - mentés)
 router.post('/uj', async (req, res) => {
     try {
-        await database.addSzalloda(req.body);
+        await database.addSzalloda(req.body, req.user);
         res.redirect('/crud?success=Szálloda sikeresen hozzáadva');
     } catch (error) {
-        res.redirect('/crud?error=Hiba a szálloda hozzáadása során');
+        res.redirect('/crud?error=' + encodeURIComponent(error.message));
     }
 });
 
@@ -67,7 +67,7 @@ router.get('/szerkesztes/:id', async (req, res) => {
         }
         
         res.render('crud-szerkesztes', {
-            title: 'Száloda Szerkesztése',
+            title: 'Szálloda Szerkesztése',
             user: req.user,
             currentPage: 'crud',
             szalloda: szalloda,
@@ -80,21 +80,23 @@ router.get('/szerkesztes/:id', async (req, res) => {
 
 // Szálloda módosítása (UPDATE - mentés)
 router.post('/szerkesztes/:id', async (req, res) => {
+
     try {
-        await database.updateSzalloda(req.params.id, req.body);
+        await database.updateSzalloda(req.params.id, req.body, req.user);
         res.redirect('/crud?success=Szálloda sikeresen módosítva');
     } catch (error) {
-        res.redirect('/crud?error=Hiba a szálloda módosítása során');
+        res.redirect('/crud?error=' + encodeURIComponent(error.message));
     }
 });
+
 
 // Szálloda törlése (DELETE)
 router.post('/torles/:id', async (req, res) => {
     try {
-        await database.deleteSzalloda(req.params.id);
+        await database.deleteSzalloda(req.params.id, req.user);
         res.redirect('/crud?success=Szálloda sikeresen törölve');
     } catch (error) {
-        res.redirect('/crud?error=Hiba a szálloda törlése során');
+        res.redirect('/crud?error=' + encodeURIComponent(error.message));
     }
 });
 

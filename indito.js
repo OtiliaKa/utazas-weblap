@@ -6,8 +6,6 @@ let session = require('express-session');
 const usersRoutes = require("./routes/users");
 const passport=require('passport');
 const LocalStrategy=require('passport-local').Strategy;
-const mysql = require('mysql2');
-const crypto=require('crypto');
 const bcrypt = require('bcrypt');
 const flash = require('connect-flash');
 var MySQLStore = require('express-mysql-session')(session);
@@ -141,22 +139,6 @@ app.get('/regisztracio', (req, res) => {
         currentPage: 'regisztracio' })                     // need regisztracio.ejs here
     });
 
-function userExists(req,res,next)
-{
-    connection.query('Select * from users where email=? ', [req.body.email], function(error, results, fields) {
-        if (error) 
-            console.log("Error");
-        else if(results.length>0)
-            res.redirect('/userAlreadyExists')
-        else
-            next();
-    });
-}
-
-app.get('/userAlreadyExists', (req, res, next) => {
-    console.log("Inside get");
-    res.send('<h1>Ezzel az e-mail címmel már létezik felhasználói fiók!</h1><p><a href="/register">Használjon másik e-mail címet a regisztrációhoz!</a></p>');
-});
 
 app.get('/bejelentkezes', (req, res) => {
     res.render('bejelentkezes', {
@@ -177,11 +159,9 @@ app.get('/login-success', (req, res, next) => {
 
 
 app.get('/protected-route',isAuth,(req, res, next) => {
-    admin=false
-    if(req.isAuthenticated() && req.user.isAdmin==1)
-        admin=true
+    const isAdmin = req.user && req.user.szerepkor === 'admin';
     res.render("protected", {
-        isAdmin: admin, username: req.user.username
+        isAdmin: isAdmin, userName: req.user.nev
    });
 });
 
@@ -199,25 +179,36 @@ app.get('/notAuthorized', (req, res, next) => {
     
 });
 
-app.get('/admin-route',isAdmin,(req, res, next) => {
-    res.render("admin", {
-        userName: req.user.username
-   });
+app.get('/admin', async (req, res) => {
+    if (!req.user || req.user.szerepkor !== 'admin') {
+        return res.render('admin', {
+            title: 'Admin',
+            user: req.user,
+            currentPage: 'admin',
+            error: 'Csak adminisztrátorok férhetnek hozzá ehhez az oldalhoz',
+            messages: []
+        });
+    }
+    try {
+        const messages = await database.getAllMessages();
+        res.render('admin', {
+            title: 'Admin',
+            user: req.user,
+            currentPage: 'admin',
+            messages: messages,
+            error: null
+        });
+    } catch (error) {
+        res.render('admin', {
+            title: 'Admin',
+            user: req.user,
+            currentPage: 'admin',
+            messages: [],
+            error: 'Hiba az üzenetek betöltése során'
+        });
+    }
 });
 
-function isAdmin(req,res,next)
-{
-    if(req.isAuthenticated() && req.user.isAdmin==1)
-        next();
-    else
-        res.redirect('/notAuthorizedAdmin');   
-}
-
-app.get('/notAuthorizedAdmin', (req, res, next) => {
-    console.log("Inside get");
-    res.send('<h1>Az oldal csak adminoknak elérhető</h1><p><a href="/login">Retry to Login as admin</a></p>');
-    
-});
 
 
 

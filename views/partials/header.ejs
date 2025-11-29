@@ -4,6 +4,7 @@
 		<title>Napfény Tours - <% if (typeof title !== 'undefined') { %><%= title %><% } else { %>Utazási iroda<% } %></title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
 	</head>
@@ -24,20 +25,21 @@
 							<li class="<%= (currentPage === 'adatbazis') ? 'active' : '' %>"><a href="/adatbazis">Ajánlatok</a></li>
 							<li class="<%= (currentPage === 'kapcsolat') ? 'active' : '' %>"><a href="/kapcsolat">Kapcsolat</a></li>
 							
-							<% if (typeof user !== 'undefined' && user) { %>
-							<li class="<%= (currentPage === 'uzenetek') ? 'active' : '' %>"><a href="/uzenetek">Üzenetek</a></li>
-							<% } %>
-							
-							<% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+						
+							<% if (typeof user !== 'undefined' && user && user.szerepkor === 'admin') { %>
 							<li class="<%= (currentPage === 'admin') ? 'active' : '' %>"><a href="/admin">Admin</a></li>
 							<% } %>
-							
+
 							<li class="<%= (currentPage === 'crud') ? 'active' : '' %>"><a href="/crud">Szállodák</a></li>
+
+							<% if (typeof user !== 'undefined' && user && user.szerepkor === 'admin') { %>
+							<li class="<%= (currentPage === 'uzenetek') ? 'active' : '' %>"><a href="/uzenetek">Üzenetek</a></li>
+							<% } %>
 							<li class="<%= (currentPage === 'bejelentkezes') ? 'active' : '' %>"><a href="/bejelentkezes">Fiók</a></li>
 						</ul>
 						<ul class="icons">
 							<% if (typeof user !== 'undefined' && user) { %>
-								<li><span style="color: white; margin-right: 15px;">Üdv, <%= user.username %>!</span></li>
+								<li><span style="color: white; margin-right: 15px;">Üdv, <%= user.nev %>!</span></li>
 								<li><a href="/kijelentkezes" class="icon solid fa-sign-out-alt"><span class="label">Kijelentkezés</span></a></li>
 							<% } else { %>
 								<li><a href="/bejelentkezes" class="icon solid fa-sign-in-alt"><span class="label">Bejelentkezés</span></a></li>

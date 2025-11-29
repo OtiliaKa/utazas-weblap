@@ -1,0 +1,23 @@
+<%- include('partials/header', { title: 'Védett oldal', user: { nev: username }, currentPage: 'protected' }) %>
+
+<div id="main">
+    <article class="post">
+        <header class="major">
+            <h1>Védett oldal</h1>
+        </header>
+
+        <p>Üdvözöljük, <%= userName %>!</p>
+
+        <% if (isAdmin) { %>
+            <p>Adminisztrátori jogosultságokkal rendelkezik.</p>
+            <a href="/admin">Admin panel</a>
+        <% } %>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/">Főoldal</a> |
+            <a href="/kijelentkezes">Kijelentkezés</a>
+        </div>
+    </article>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,37 @@
+<%- include('partials/header', { title: title, user: user, currentPage: currentPage }) %>
+
+
+<div id="main">
+    <article class="post">
+        <header class="major">
+            <h1>Admin felület</h1>
+        </header>
+
+        <form action="/admin" method="POST" style="display: flex; flex-direction: column; align-items: center;">  
+            
+            <a href="/">Mainpage</a>
+<%    if (isAdmin) { %>
+        <a href="/admin">Admin</a>
+    <% } 
+    if (isAuth) { %>
+        <a href="/protected-route">Dashboard</a>
+        <a href="/logout">Logout</a>
+    <% } 
+    else{ %>  
+        <a href="/login">Login</a>
+    <% } %>
+<a href="/register">Register</a>
+<p></p>
+<%    if (isAuth) { %>
+        <h1>You are logged in. Hello <%= userName %>!</h1> 
+    <% } 
+    else{ %>  
+        <h1>You are not logged in.</h1> 
+    <% }
+%>
+
+    </article>
+</div>
+</form>
+
+<%- include('partials/footer') %>

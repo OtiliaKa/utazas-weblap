@@ -1,79 +1,239 @@
+
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const session = require('express-session');
+let session = require('express-session');
+const usersRoutes = require("./routes/users");
+const passport=require('passport');
+const LocalStrategy=require('passport-local').Strategy;
+const mysql = require('mysql2');
+const crypto=require('crypto');
+const bcrypt = require('bcrypt');
+const flash = require('connect-flash');
+var MySQLStore = require('express-mysql-session')(session);
+const { db, database, initializeData } = require('./models/database');
+
 
 // Route-ok importálása
 const adatbazisRoutes = require('./routes/adatbazis');
 const crudRoutes = require('./routes/crud');
+const uzenetekRoutes = require('./routes/uzenetek');
 
 const app = express();
 const PORT = 3000;
 
 // Middleware-ek
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(session({                                       // definiáljuk a session middleware-t
+        key: 'session_cookie_name',                             // ezt használjuk a Cookie-ban
+        secret: 'session_cookie_secret',
 
-// Session beállítás
-app.use(session({
-    secret: 'napfeny-tours-secret-key',
-    resave: false,
-    saveUnitialized: true,
-    cookie: { secure: false }
+// A user datbázisban tároljuk a Session adatokat:
+        store: new MySQLStore({
+        host:'localhost',
+        user:'root',
+        password: "",
+        database:'utazas'
+        }),
+        resave: false,
+        saveUninitialized: false,
+        cookie:{
+        maxAge:1000*60*60*24,
+        }
+        }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+app.use(bodyParser.json());                                 // A Body-parser middleware-t bejövő adatok elemzésére használja a passport, itt inicializáljuk azt
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Content Security Policy
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;");
+    next();
+});
+
+// Passport Local Strategy konfiguráció
+passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'jelszo'
+}, async (email, jelszo, done) => {
+    try {
+        // Felhasználó keresése az adatbázisban
+        const [results] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+
+        if (results.length === 0) {
+            return done(null, false, { message: 'Hibás email vagy jelszó!' });
+        }
+
+        const user = results[0];
+
+        // Ellenőrizzük, hogy van-e jelszó hash
+        if (!user.jelszo) {
+            return done(null, false, { message: 'Hibás email vagy jelszó!' });
+        }
+
+        // Jelszó ellenőrzése
+        const isValidPassword = await bcrypt.compare(jelszo, user.jelszo);
+        if (!isValidPassword) {
+            return done(null, false, { message: 'Hibás email vagy jelszó!' });
+        }
+
+        return done(null, user);
+    } catch (error) {
+        return done(error);
+    }
 }));
 
+// Passport serialization
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+// Passport deserialization
+passport.deserializeUser(async (id, done) => {
+    try {
+        const [results] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
+        if (results.length === 0) return done(null, false);
+        done(null, results[0]);
+    } catch (error) {
+        done(error);
+    }
+});
+
 // View engine beállítás
+app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Routing
 app.get('/', (req, res) => {
-    res.render('fooldal', { 
+    res.render('fooldal', {
         title: 'Főoldal',
-        user: req.session.user,
+        user: req.user,
         currentPage: 'fooldal'
     });
 });
 
 app.get('/kapcsolat', (req, res) => {
-    res.render('kapcsolat', { 
+    res.render('kapcsolat', {
         title: 'Kapcsolat',
-        user: req.session.user,
+        user: req.user,
         currentPage: 'kapcsolat'
     });
 });
 
-//ADATBÁZIS ROUTE - EZ FOGJA KEZELNI AZ /adatbazis ÚTVONALAT 
+//ADATBÁZIS ROUTE - EZ FOGJA KEZELNI AZ /adatbazis ÚTVONALAT
 app.use('/adatbazis', adatbazisRoutes);
 
-// ⭐⭐⭐ CRUD ROUTE - EZ FOGJA KEZELNI AZ /crud ÚTVONALAT ⭐⭐⭐
-app.use('/crud', crudRoutes);
+app.use('/crud', crudRoutes);                               // CRUD ROUTE - EZ FOGJA KEZELNI AZ /crud ÚTVONALAT
+
+app.use('/uzenetek', uzenetekRoutes);                        // UZENETEK ROUTE - EZ FOGJA KEZELNI AZ /uzenetek ÚTVONALAT
 
 // Ideiglenes route-ok a hiányzó oldalakhoz
-app.get('/bejelentkezes', (req, res) => {
-    res.send('Bejelentkezés oldal - készülőben...');
-});
+
+app.use("/fiok", usersRoutes);
 
 app.get('/regisztracio', (req, res) => {
-    res.send('Regisztráció oldal - készülőben...');
+        res.render('regisztracio', {
+        title: 'Fiók',
+        user: req.user,
+        currentPage: 'regisztracio' })                     // need regisztracio.ejs here
+    });
+
+function userExists(req,res,next)
+{
+    connection.query('Select * from users where email=? ', [req.body.email], function(error, results, fields) {
+        if (error) 
+            console.log("Error");
+        else if(results.length>0)
+            res.redirect('/userAlreadyExists')
+        else
+            next();
+    });
+}
+
+app.get('/userAlreadyExists', (req, res, next) => {
+    console.log("Inside get");
+    res.send('<h1>Ezzel az e-mail címmel már létezik felhasználói fiók!</h1><p><a href="/register">Használjon másik e-mail címet a regisztrációhoz!</a></p>');
 });
 
-app.get('/uzenetek', (req, res) => {
-    res.send('Üzenetek oldal - készülőben...');
+app.get('/bejelentkezes', (req, res) => {
+    res.render('bejelentkezes', {
+        title: 'Fiók',
+        user: req.user,
+        currentPage: 'bejelentkezes' })                     // need bejelentkezes.ejs here
+    });
+
+app.post('/login',passport.authenticate('local',{failureRedirect:'/login-failure',successRedirect:'/login-success'}));
+
+app.get('/login-failure', (req, res, next) => {
+    res.send('You entered the wrong password.');
 });
 
-app.get('/admin', (req, res) => {
-    res.send('Admin oldal - készülőben...');
+app.get('/login-success', (req, res, next) => {
+    res.redirect('/protected-route');
 });
+
+
+app.get('/protected-route',isAuth,(req, res, next) => {
+    admin=false
+    if(req.isAuthenticated() && req.user.isAdmin==1)
+        admin=true
+    res.render("protected", {
+        isAdmin: admin, username: req.user.username
+   });
+});
+
+function isAuth(req,res,next)
+{
+    if(req.isAuthenticated())
+        next();
+    else
+        res.redirect('/notAuthorized');
+}
+
+app.get('/notAuthorized', (req, res, next) => {
+    console.log("Inside get");
+    res.send('<h1>You are not authorized to view the resource </h1><p><a href="/login">Retry Login</a></p>');
+    
+});
+
+app.get('/admin-route',isAdmin,(req, res, next) => {
+    res.render("admin", {
+        userName: req.user.username
+   });
+});
+
+function isAdmin(req,res,next)
+{
+    if(req.isAuthenticated() && req.user.isAdmin==1)
+        next();
+    else
+        res.redirect('/notAuthorizedAdmin');   
+}
+
+app.get('/notAuthorizedAdmin', (req, res, next) => {
+    console.log("Inside get");
+    res.send('<h1>Az oldal csak adminoknak elérhető</h1><p><a href="/login">Retry to Login as admin</a></p>');
+    
+});
+
+
 
 app.get('/kijelentkezes', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
+    req.logout((err) => {
+        if (err) return next(err);
+        res.redirect('/');
+    });
 });
 
-// Szerver indítása
-app.listen(PORT, () => {
-    console.log(`✅ A szerver fut a http://localhost:${PORT} címen`);
-    console.log(`📁 A projekt mappa: ${__dirname}`);
+// Szerver indítása az adatbázis inicializálása után
+initializeData().then(() => {
+    app.listen(PORT, () => {
+        console.log(`✅ A szerver fut a http://localhost:${PORT} címen`);
+        console.log(`📁 A projekt mappa: ${__dirname}`);
+    });
+}).catch(err => {
+    console.error('Hiba az adatbázis inicializálásakor:', err);
 });

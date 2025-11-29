@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const db = require("../models/database");
+const passport = require("passport");
+const { db } = require("../models/database");
 
 router.get("/regisztracio", (req, res) => {                                 // regisztráció
     res.render("regisztracio", {
         title: "Regisztráció",
-        user: req.session.user,
+        user: req.user,
         currentPage: "regisztracio"
     });
 });
@@ -16,68 +17,36 @@ router.post("/regisztracio", async (req, res) => {
 
     const hashed = await bcrypt.hash(jelszo, 10);
 
-    db.query(
-        "INSERT INTO users (nev, email, jelszo, szerepkor) VALUES (?, ?, ?, 'regisztralt')",
-        [nev, email, hashed],
-        (err) => {
-            if (err) throw err;
-            res.redirect("/bejelentkezes");
-        }
-    );
+    try {
+        await db.query(
+            "INSERT INTO users (nev, email, jelszo, szerepkor) VALUES (?, ?, ?, 'regisztralt')",
+            [nev, email, hashed]
+        );
+        res.redirect("/bejelentkezes");
+    } catch (err) {
+        console.error("Registration error:", err);
+        res.status(500).send("Hiba történt a regisztráció során");
+    }
 });
 
-router.get("/bejelentkezes", (req, res) => {                                    // bejelentkezés
+router.get("/bejelentkezes", (req, res) => {                                // bejelentkezés
     res.render("bejelentkezes", {
         title: "Bejelentkezés",
-        user: req.session.user,
+        user: req.user,
         currentPage: "bejelentkezes",
-        error: null
+        error: req.flash ? req.flash('error') : null
     });
 });
 
-router.post("/bejelentkezes", (req, res) => {
-    const { email, jelszo } = req.body;
-
-    db.query(
-        "SELECT * FROM users WHERE email = ?",
-        [email],
-        async (err, results) => {
-            if (err) throw err;
-
-            if (results.length === 0) {
-                return res.render("bejelentkezes", {
-                    title: "Bejelentkezés",
-                    user: null,
-                    currentPage: "bejelentkezes",
-                    error: "Hibás email vagy jelszó!"
-                });
-            }
-
-            const user = results[0];
-            const match = await bcrypt.compare(jelszo, user.jelszo);
-
-            if (!match) {
-                return res.render("bejelentkezes", {
-                    title: "Bejelentkezés",
-                    user: null,
-                    currentPage: "bejelentkezes",
-                    error: "Hibás email vagy jelszó!"
-                });
-            }
-
-            req.session.user = {                                                // sikeres bejelentkezés
-                id: user.id,
-                nev: user.nev,
-                szerepkor: user.szerepkor
-            };
-
-            res.redirect("/");
-        }
-    );
-});
+router.post("/bejelentkezes", passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/bejelentkezes',
+    failureFlash: true
+}));
 
 router.get("/kijelentkezes", (req, res) => {                                    // kijelentkezés
-    req.session.destroy(() => {
+    req.logout((err) => {
+        if (err) return next(err);
         res.redirect("/");                                                      //kijelentkezés után a főoldalra irányít
     });
 });

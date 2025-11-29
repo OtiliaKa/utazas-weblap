@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const database = require('../models/database');
+const { database } = require('../models/database');
 
 // Adatbázis menü főoldala
 router.get('/', async (req, res) => {
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 
         res.render('adatbazis', {
             title: 'Ajánlatok',
-            user: req.session.user,
+            user: req.user,
             currentPage: 'adatbazis',
             helysegek: helysegek,
             szallodak: szallodak,
@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
         console.error('❌ Adatbázis hiba:', error);
         res.render('adatbazis', {
             title: 'Ajánlatok',
-            user: req.session.user,
+            user: req.user,
             currentPage: 'adatbazis',
             helysegek: [],
             szallodak: [],

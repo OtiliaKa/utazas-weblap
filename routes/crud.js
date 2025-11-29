@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const database = require('../models/database');
+const { database } = require('../models/database');
 
 // CRUD főoldal - összes szálloda listázása (READ)
 router.get('/', async (req, res) => {
@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
         
         res.render('crud', {
             title: 'Szálloda Kezelés',
-            user: req.session.user,
+            user: req.user,
             currentPage: 'crud',
             szallodak: szallodak,
             helysegek: helysegek,
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
         console.error('CRUD hiba:', error);
         res.render('crud', {
             title: 'Szálloda Kezelés',
-            user: req.session.user,
+            user: req.user,
             currentPage: 'crud',
             szallodak: [],
             helysegek: [],
@@ -37,7 +37,7 @@ router.get('/uj', async (req, res) => {
         
         res.render('crud-uj', {
             title: 'Új Szálloda',
-            user: req.session.user,
+            user: req.user,
             currentPage: 'crud',
             helysegek: helysegek
         });
@@ -68,7 +68,7 @@ router.get('/szerkesztes/:id', async (req, res) => {
         
         res.render('crud-szerkesztes', {
             title: 'Száloda Szerkesztése',
-            user: req.session.user,
+            user: req.user,
             currentPage: 'crud',
             szalloda: szalloda,
             helysegek: helysegek

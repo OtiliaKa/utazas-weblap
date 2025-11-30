@@ -155,6 +155,7 @@ app.get('/login-failure', (req, res, next) => {
 
 app.get('/login-success', (req, res, next) => {
     res.redirect('/protected-route');
+    res.render("Üdvözöljük," + user.name);
 });
 
 
@@ -212,10 +213,13 @@ app.get('/admin', async (req, res) => {
 
 
 
-app.get('/kijelentkezes', (req, res) => {
+app.post('/kijelentkezes', (req, res, next) => {
     req.logout((err) => {
         if (err) return next(err);
-        res.redirect('/');
+        req.session.destroy((err) => {
+            if (err) return next(err);
+            res.redirect('/bejelentkezes');
+        });
     });
 });
 

@@ -39,15 +39,18 @@ router.get("/bejelentkezes", (req, res) => {                                // b
 });
 
 router.post("/bejelentkezes", passport.authenticate('local', {
-    successRedirect: '/',
+    successRedirect: '/bejelentkezes',
     failureRedirect: '/bejelentkezes',
     failureFlash: true
 }));
 
-router.get("/kijelentkezes", (req, res) => {                                    // kijelentkezés
+router.post("/kijelentkezes", (req, res, next) => {                                    // kijelentkezés
     req.logout((err) => {
         if (err) return next(err);
-        res.redirect("/");                                                      //kijelentkezés után a főoldalra irányít
+        req.session.destroy((err) => {
+            if (err) return next(err);
+            res.redirect("/bejelentkezes");                                                      //kijelentkezés után a fiók oldalra irányít
+        });
     });
 });
 

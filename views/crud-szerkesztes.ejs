@@ -10,6 +10,7 @@
 
         <a href="/crud" class="button">⬅️ Vissza a listához</a>
 
+        <% if (user && user.szerepkor == 'admin') { %>
         <form method="POST" action="/crud/szerkesztes/<%= szalloda.az %>" style="margin-top: 2rem;">
             <div class="row gtr-uniform">
                 <div class="col-6 col-12-xsmall">
@@ -64,6 +65,7 @@
                 </div>
             </div>
         </form>
+        <% } %>
     </article>
 </div>
 

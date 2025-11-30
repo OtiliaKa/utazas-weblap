@@ -22,9 +22,11 @@
         <% } %>
 
         <!-- Új szálloda gomb -->
+        <% if (user && user.szerepkor == 'admin') { %>
         <div style="margin-bottom: 2rem;">
             <a href="/crud/uj" class="button primary">➕ Új Szálloda</a>
         </div>
+        <% } %>
 
         <!-- Szállodák táblázata -->
         <div class="table-wrapper">
@@ -38,7 +40,9 @@
                         <th>Tengerpart</th>
                         <th>Repültér</th>
                         <th>Félpanzió</th>
+                        <% if (user && user.szerepkor == 'admin') { %>
                         <th>Műveletek</th>
+                        <% } %>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,10 +67,12 @@
                             <td><%= szalloda.repter_tav %> km</td>
                             <td><%= szalloda.felpanzio ? '✅ Igen' : '❌ Nem' %></td>
                             <td>
+                                <% if (user && user.szerepkor == 'admin') { %>
                                 <a href="/crud/szerkesztes/<%= szalloda.az %>" class="button small">✏️ Szerkesztés</a>
                                 <form action="/crud/torles/<%= szalloda.az %>" method="POST" style="display: inline;">
                                     <button type="submit" class="button small" onclick="return confirm('Biztosan törölni szeretné ezt a szállodát?')">🗑️ Törlés</button>
                                 </form>
+                                <% } %>
                             </td>
                         </tr>
                         <% }); %>

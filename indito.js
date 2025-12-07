@@ -18,7 +18,7 @@ const crudRoutes = require('./routes/crud');
 const uzenetekRoutes = require('./routes/uzenetek');
 
 const app = express();
-const PORT = 3000;
+const PORT = 4116;
 
 // Middleware-ek
 app.use(session({                                       // definiáljuk a session middleware-t
@@ -101,11 +101,12 @@ passport.deserializeUser(async (id, done) => {
 
 // View engine beállítás
 app.use(express.static('public'));
+app.use('/app116', express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Routing
-app.get('/', (req, res) => {
+app.get('/app116/', (req, res) => {
     res.render('fooldal', {
         title: 'Főoldal',
         user: req.user,

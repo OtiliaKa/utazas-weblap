@@ -21,32 +21,32 @@
 				<!-- Nav -->
 					<nav id="nav">
 						<ul class="links">
-							<li class="<%= (currentPage === 'fooldal') ? 'active' : '' %>"><a href="/">Főoldal</a></li>
-							<li class="<%= (currentPage === 'adatbazis') ? 'active' : '' %>"><a href="/adatbazis">Ajánlatok</a></li>
-							<li class="<%= (currentPage === 'kapcsolat') ? 'active' : '' %>"><a href="/kapcsolat">Kapcsolat</a></li>
+							<li class="<%= (currentPage === 'fooldal') ? 'active' : '' %>"><a href="/app116/">Főoldal</a></li>
+							<li class="<%= (currentPage === 'adatbazis') ? 'active' : '' %>"><a href="/app116/adatbazis">Ajánlatok</a></li>
+							<li class="<%= (currentPage === 'kapcsolat') ? 'active' : '' %>"><a href="/app116/kapcsolat">Kapcsolat</a></li>
 							
-							<li class="<%= (currentPage === 'crud') ? 'active' : '' %>"><a href="/crud">Szállodák</a></li>
+							<li class="<%= (currentPage === 'crud') ? 'active' : '' %>"><a href="/app116/crud">Szállodák</a></li>
 
-							<% if (typeof user !== 'undefined' && user && user.szerepkor === 'admin') { %>
-							<li class="<%= (currentPage === 'uzenetek') ? 'active' : '' %>"><a href="/uzenetek">Üzenetek</a></li>
+							<% if (typeof user !== 'undefined' && user) { %>
+							<li class="<%= (currentPage === 'uzenetek') ? 'active' : '' %>"><a href="/app116/uzenetek">Üzenetek</a></li>
 							<% } %>
 							
 							<% if (typeof user !== 'undefined' && user && user.szerepkor === 'admin') { %>
-							<li class="<%= (currentPage === 'admin') ? 'active' : '' %>"><a href="/admin">Admin</a></li>
+							<li class="<%= (currentPage === 'admin') ? 'active' : '' %>"><a href="/app116/admin">Admin</a></li>
 							<% } %>
 
 							
 
 
-							<li class="<%= (currentPage === 'bejelentkezes') ? 'active' : '' %>"><a href="/bejelentkezes">Fiók</a></li>
+							<li class="<%= (currentPage === 'bejelentkezes') ? 'active' : '' %>"><a href="/app116/fiok/bejelentkezes">Fiók</a></li>
 						</ul>
 						<ul class="icons">
 							<% if (typeof user !== 'undefined' && user) { %>
 								<li><span style="color: white; margin-right: 15px;">Üdv, <%= user.nev %>!</span></li>
-								<li><a href="/kijelentkezes" class="icon solid fa-sign-out-alt"><span class="label">Kijelentkezés</span></a></li>
+								<li><a href="/app116/fiok/kijelentkezes" class="icon solid fa-sign-out-alt"><span class="label">Kijelentkezés</span></a></li>
 							<% } else { %>
-								<li><a href="/bejelentkezes" class="icon solid fa-sign-in-alt"><span class="label">Bejelentkezés</span></a></li>
-								<li><a href="/regisztracio" class="icon solid fa-user-plus"><span class="label">Regisztráció</span></a></li>
+								<li><a href="/app116/fiok/bejelentkezes" class="icon solid fa-sign-in-alt"><span class="label">Bejelentkezés</span></a></li>
+								<li><a href="/app116/fiok/regisztracio" class="icon solid fa-user-plus"><span class="label">Regisztráció</span></a></li>
 							<% } %>
 						</ul>
 					</nav>

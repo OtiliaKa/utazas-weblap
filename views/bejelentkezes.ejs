@@ -11,16 +11,16 @@
         </header>
 
         <% if (user) { %>
-            <form action="/kijelentkezes" method="POST" style="display: flex; flex-direction: column; align-items: center;">
+            <form action="/app116/fiok/kijelentkezes" method="POST" style="display: flex; flex-direction: column; align-items: center;">
                 <button type="submit" style="align-items: center;">Kijelentkezés</button>
             </form>
         <% } else { %>
-            <form action="/fiok/bejelentkezes" method="POST" style="display: flex; flex-direction: column; align-items: center;">
+            <form action="/app116/fiok/bejelentkezes" method="POST" style="display: flex; flex-direction: column; align-items: center;">
                 <input type="email" name="email" placeholder="Email cím" required style="max-width: 600px; width: 100%">
                 <input type="password" name="jelszo" placeholder="Jelszó" required style="max-width: 600px; width: 100%">
                 <button type="submit" style="margin: 50px">Bejelentkezés</button>
             </form>
-            <a id="link" href="/fiok/regisztracio" style="display: flex; flex-direction: column; align-items: center;"><p>Kattintson ide a regisztrációhoz!</p></a>
+            <a id="link" href="/app116/fiok/regisztracio" style="display: flex; flex-direction: column; align-items: center;"><p>Kattintson ide a regisztrációhoz!</p></a>
         <% } %>
     </article>
 </div>

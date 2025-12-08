@@ -22,7 +22,7 @@ router.post("/regisztracio", async (req, res) => {
             "INSERT INTO users (nev, email, jelszo, szerepkor) VALUES (?, ?, ?, 'regisztralt')",
             [nev, email, hashed]
         );
-        res.redirect("/bejelentkezes");
+        res.redirect("/app116/fiok/bejelentkezes");
     } catch (err) {
         console.error("Registration error:", err);
         res.status(500).send("Hiba történt a regisztráció során");
@@ -39,17 +39,17 @@ router.get("/bejelentkezes", (req, res) => {                                // b
 });
 
 router.post("/bejelentkezes", passport.authenticate('local', {
-    successRedirect: '/bejelentkezes',
-    failureRedirect: '/bejelentkezes',
+    successRedirect: '/app116/fiok/bejelentkezes',
+    failureRedirect: '/app116/fiok/bejelentkezes',
     failureFlash: true
 }));
 
-router.post("/kijelentkezes", (req, res, next) => {                                    // kijelentkezés
+router.get("/kijelentkezes", (req, res, next) => {                                    // kijelentkezés
     req.logout((err) => {
         if (err) return next(err);
         req.session.destroy((err) => {
             if (err) return next(err);
-            res.redirect("/bejelentkezes");                                                      //kijelentkezés után a fiók oldalra irányít
+            res.redirect("/app116/fiok/bejelentkezes");                                                      //kijelentkezés után a fiók oldalra irányít
         });
     });
 });

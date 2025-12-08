@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
 router.get('/uj', async (req, res) => {
     try {
         const helysegek = await database.getHelysegekForDropdown();
-        
+
         res.render('crud-uj', {
             title: 'Új Szálloda',
             user: req.user,
@@ -42,7 +42,7 @@ router.get('/uj', async (req, res) => {
             helysegek: helysegek
         });
     } catch (error) {
-        res.redirect('/crud?error=Hiba az űrlap betöltése során');
+        res.redirect('/app116/crud?error=Hiba az űrlap betöltése során');
     }
 });
 
@@ -50,9 +50,9 @@ router.get('/uj', async (req, res) => {
 router.post('/uj', async (req, res) => {
     try {
         await database.addSzalloda(req.body, req.user);
-        res.redirect('/crud?success=Szálloda sikeresen hozzáadva');
+        res.redirect('/app116/crud?success=Szálloda sikeresen hozzáadva');
     } catch (error) {
-        res.redirect('/crud?error=' + encodeURIComponent(error.message));
+        res.redirect('/app116/crud?error=' + encodeURIComponent(error.message));
     }
 });
 
@@ -63,7 +63,7 @@ router.get('/szerkesztes/:id', async (req, res) => {
         const helysegek = await database.getHelysegekForDropdown();
         
         if (!szalloda) {
-            return res.redirect('/crud?error=Szálloda nem található');
+            return res.redirect('/app116/crud?error=Szálloda nem található');
         }
         
         res.render('crud-szerkesztes', {
@@ -74,7 +74,7 @@ router.get('/szerkesztes/:id', async (req, res) => {
             helysegek: helysegek
         });
     } catch (error) {
-        res.redirect('/crud?error=Hiba a szerkesztés betöltése során');
+        res.redirect('/app116/crud?error=Hiba a szerkesztés betöltése során');
     }
 });
 
@@ -83,9 +83,9 @@ router.post('/szerkesztes/:id', async (req, res) => {
 
     try {
         await database.updateSzalloda(req.params.id, req.body, req.user);
-        res.redirect('/crud?success=Szálloda sikeresen módosítva');
+        res.redirect('/app116/crud?success=Szálloda sikeresen módosítva');
     } catch (error) {
-        res.redirect('/crud?error=' + encodeURIComponent(error.message));
+        res.redirect('/app116/crud?error=' + encodeURIComponent(error.message));
     }
 });
 
@@ -94,9 +94,9 @@ router.post('/szerkesztes/:id', async (req, res) => {
 router.post('/torles/:id', async (req, res) => {
     try {
         await database.deleteSzalloda(req.params.id, req.user);
-        res.redirect('/crud?success=Szálloda sikeresen törölve');
+        res.redirect('/app116/crud?success=Szálloda sikeresen törölve');
     } catch (error) {
-        res.redirect('/crud?error=' + encodeURIComponent(error.message));
+        res.redirect('/app116/crud?error=' + encodeURIComponent(error.message));
     }
 });
 

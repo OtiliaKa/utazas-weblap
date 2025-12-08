@@ -4,7 +4,7 @@ const { database } = require('../models/database');
 
 router.get('/', async (req, res) => {
     if (!req.user) {
-        return res.redirect('/bejelentkezes');
+        return res.redirect('/app116/fiok/bejelentkezes');
     }
 
     try {
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     if (!req.user) {
-        return res.redirect('/bejelentkezes');
+        return res.redirect('/app116/fiok/bejelentkezes');
     }
 
     const { content } = req.body;
@@ -47,10 +47,10 @@ router.post('/', async (req, res) => {
             content: content,
             date: date
         });
-        res.redirect('/uzenetek');
+        res.redirect('/app116/uzenetek');
     } catch (error) {
         console.error('Hiba az üzenet küldésekor:', error);
-        res.redirect('/uzenetek?error=Hiba az üzenet küldésekor');
+        res.redirect('/app116/uzenetek?error=Hiba az üzenet küldésekor');
     }
 });
 

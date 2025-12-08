@@ -8,10 +8,10 @@
             <p>Módosítsa a szálloda adatait</p>
         </header>
 
-        <a href="/crud" class="button">⬅️ Vissza a listához</a>
+        <a href="/app116/crud" class="button">⬅️ Vissza a listához</a>
 
         <% if (user && user.szerepkor == 'admin') { %>
-        <form method="POST" action="/crud/szerkesztes/<%= szalloda.az %>" style="margin-top: 2rem;">
+        <form method="POST" action="/app116/crud/szerkesztes/<%= szalloda.az %>" style="margin-top: 2rem;">
             <div class="row gtr-uniform">
                 <div class="col-6 col-12-xsmall">
                     <label for="az">Szálloda Kód</label>
@@ -60,7 +60,7 @@
                 <div class="col-12">
                     <ul class="actions">
                         <li><input type="submit" value="💾 Módosítások Mentése" class="primary"></li>
-                        <li><a href="/crud" class="button">❌ Mégse</a></li>
+                        <li><a href="/app116/crud" class="button">❌ Mégse</a></li>
                     </ul>
                 </div>
             </div>

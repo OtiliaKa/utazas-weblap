@@ -24,7 +24,7 @@
         <!-- Új szálloda gomb -->
         <% if (user && user.szerepkor == 'admin') { %>
         <div style="margin-bottom: 2rem;">
-            <a href="/crud/uj" class="button primary">➕ Új Szálloda</a>
+            <a href="/app116/crud/uj" class="button primary">➕ Új Szálloda</a>
         </div>
         <% } %>
 
@@ -68,8 +68,8 @@
                             <td><%= szalloda.felpanzio ? '✅ Igen' : '❌ Nem' %></td>
                             <td>
                                 <% if (user && user.szerepkor == 'admin') { %>
-                                <a href="/crud/szerkesztes/<%= szalloda.az %>" class="button small">✏️ Szerkesztés</a>
-                                <form action="/crud/torles/<%= szalloda.az %>" method="POST" style="display: inline;">
+                                <a href="/app116/crud/szerkesztes/<%= szalloda.az %>" class="button small">✏️ Szerkesztés</a>
+                                <form action="/app116/crud/torles/<%= szalloda.az %>" method="POST" style="display: inline;">
                                     <button type="submit" class="button small" onclick="return confirm('Biztosan törölni szeretné ezt a szállodát?')">🗑️ Törlés</button>
                                 </form>
                                 <% } %>

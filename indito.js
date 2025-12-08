@@ -28,9 +28,9 @@ app.use(session({                                       // definiáljuk a sessio
 // A user datbázisban tároljuk a Session adatokat:
         store: new MySQLStore({
         host:'localhost',
-        user:'root',
-        password: "",
-        database:'utazas'
+        user:'studb116',
+        password: "abc123",
+        database:'db116'
         }),
         resave: false,
         saveUninitialized: false,
@@ -106,7 +106,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Routing
-app.get('/app116/', (req, res) => {
+app.get('/', (req, res) => {
     res.render('fooldal', {
         title: 'Főoldal',
         user: req.user,
@@ -133,7 +133,7 @@ app.use('/uzenetek', uzenetekRoutes);                        // UZENETEK ROUTE -
 
 app.use("/fiok", usersRoutes);
 
-app.get('/regisztracio', (req, res) => {
+app.get('/app116/fiok/regisztracio', (req, res) => {
         res.render('regisztracio', {
         title: 'Fiók',
         user: req.user,
@@ -141,26 +141,25 @@ app.get('/regisztracio', (req, res) => {
     });
 
 
-app.get('/bejelentkezes', (req, res) => {
+app.get('/app116/fiok/bejelentkezes', (req, res) => {
     res.render('bejelentkezes', {
         title: 'Fiók',
         user: req.user,
         currentPage: 'bejelentkezes' })                     // need bejelentkezes.ejs here
     });
 
-app.post('/login',passport.authenticate('local',{failureRedirect:'/login-failure',successRedirect:'/login-success'}));
 
-app.get('/login-failure', (req, res, next) => {
+app.get('/app116/fiok/login-failure', (req, res, next) => {
     res.send('You entered the wrong password.');
 });
 
-app.get('/login-success', (req, res, next) => {
+app.get('/app116/login-success', (req, res, next) => {
     res.redirect('/protected-route');
     res.render("Üdvözöljük," + user.name);
 });
 
 
-app.get('/protected-route',isAuth,(req, res, next) => {
+app.get('/app116/protected-route',isAuth,(req, res, next) => {
     const isAdmin = req.user && req.user.szerepkor === 'admin';
     res.render("protected", {
         isAdmin: isAdmin, userName: req.user.nev
@@ -172,16 +171,16 @@ function isAuth(req,res,next)
     if(req.isAuthenticated())
         next();
     else
-        res.redirect('/notAuthorized');
+        res.redirect('/app116/notAuthorized');
 }
 
-app.get('/notAuthorized', (req, res, next) => {
+app.get('/app116/notAuthorized', (req, res, next) => {
     console.log("Inside get");
     res.send('<h1>You are not authorized to view the resource </h1><p><a href="/login">Retry Login</a></p>');
     
 });
 
-app.get('/admin', async (req, res) => {
+app.get('/app116/admin', async (req, res) => {
     if (!req.user || req.user.szerepkor !== 'admin') {
         return res.render('admin', {
             title: 'Admin',
@@ -214,15 +213,6 @@ app.get('/admin', async (req, res) => {
 
 
 
-app.post('/kijelentkezes', (req, res, next) => {
-    req.logout((err) => {
-        if (err) return next(err);
-        req.session.destroy((err) => {
-            if (err) return next(err);
-            res.redirect('/bejelentkezes');
-        });
-    });
-});
 
 // Szerver indítása az adatbázis inicializálása után
 initializeData().then(() => {

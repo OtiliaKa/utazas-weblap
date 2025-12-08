@@ -106,7 +106,9 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Routing
-app.get('/', (req, res) => {
+
+
+app.get('/app116', (req, res) => {
     res.render('fooldal', {
         title: 'Főoldal',
         user: req.user,
@@ -114,7 +116,7 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/kapcsolat', (req, res) => {
+app.get('/app116/kapcsolat', (req, res) => {
     res.render('kapcsolat', {
         title: 'Kapcsolat',
         user: req.user,
@@ -123,15 +125,15 @@ app.get('/kapcsolat', (req, res) => {
 });
 
 //ADATBÁZIS ROUTE - EZ FOGJA KEZELNI AZ /adatbazis ÚTVONALAT
-app.use('/adatbazis', adatbazisRoutes);
+app.use('/app116/adatbazis', adatbazisRoutes);
 
-app.use('/crud', crudRoutes);                               // CRUD ROUTE - EZ FOGJA KEZELNI AZ /crud ÚTVONALAT
+app.use('/app116/crud', crudRoutes);                               // CRUD ROUTE - EZ FOGJA KEZELNI AZ /crud ÚTVONALAT
 
-app.use('/uzenetek', uzenetekRoutes);                        // UZENETEK ROUTE - EZ FOGJA KEZELNI AZ /uzenetek ÚTVONALAT
+app.use('/app116/uzenetek', uzenetekRoutes);                        // UZENETEK ROUTE - EZ FOGJA KEZELNI AZ /uzenetek ÚTVONALAT
 
 // Ideiglenes route-ok a hiányzó oldalakhoz
 
-app.use("/fiok", usersRoutes);
+app.use("/app116/fiok", usersRoutes);
 
 app.get('/app116/fiok/regisztracio', (req, res) => {
         res.render('regisztracio', {
